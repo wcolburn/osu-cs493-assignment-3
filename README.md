@@ -1,8 +1,5 @@
 # Assignment 3
 
-**Assignment due at 11:59pm on Monday 5/16/2022**<br/>
-**Demo due by 11:59pm on Monday 5/30/2022**
-
 The goal of this assignment is to incorporate authorization and authentication into our businesses API.  There are a few parts to this assignment, as described below.
 
 You are provided some starter code in this repository that implements a MySQL/Sequelize-based solution to assignment 2.  The starter code contains the following components:
@@ -77,10 +74,6 @@ For 10 points of extra credit, you can implement a rate-limiting scheme that wor
   * Requests that come from an authenticated user are rate-limited on a per-user basis.  These authenticated requests can be made at a rate of 10 requests per minute.
 
 This rate-limiting scheme should be backed by a Redis cache that runs in a Docker container.  A full specification for the Redis cache should be added to `compose.yml` so the entire application can still be launched from scratch using Docker Compose.
-
-## Submission
-
-We'll be using GitHub Classroom for this assignment, and you will submit your assignment via GitHub.  Just make sure your completed files are committed and pushed by the assignment's deadline to the main branch of the GitHub repo that was created for you by GitHub Classroom.  A good way to check whether your files are safely submitted is to look at the main branch your assignment repo on the github.com website (i.e. https://github.com/osu-cs493-sp22/assignment-3-YourGitHubUsername/). If your changes show up there, you can consider your files submitted.
 
 ## Grading criteria
 

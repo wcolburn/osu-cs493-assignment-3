@@ -23,6 +23,7 @@
     "express": "^4.17.3",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
+    "newman": "^6.2.1",
     "sequelize": "^6.19.0"
   },
   "devDependencies": {

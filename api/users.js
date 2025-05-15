@@ -3,7 +3,7 @@ const { Router } = require('express')
 const { Business } = require('../models/business')
 const { Photo } = require('../models/photo')
 const { Review } = require('../models/review')
-const { User } = require('../models/user')
+const { User, UserClientFields } = require('../models/user')
 
 const router = Router()
 
@@ -12,8 +12,8 @@ const router = Router()
  */
 router.post('/', async function (req, res) {
   try {
-      const photo = await Photo.create(req.body, PhotoClientFields)
-      res.status(201).send({ id: photo.id })
+      const user = await User.create(req.body, UserClientFields)
+      res.status(201).send({ id: user.id })
     } catch (e) {
       if (e instanceof ValidationError) {
         res.status(400).send({ error: e.message })

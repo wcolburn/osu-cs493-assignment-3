@@ -24,6 +24,21 @@ router.post('/', async function (req, res) {
 })
 
 /*
+ * Route to get a user.
+ */
+router.get('/:userId', async function (req, res) {
+  const userId = req.params.userId
+  const user = await User.findByPk(userId, {
+    attributes: ['id', 'name', 'email', 'admin']
+  })
+  if (user) {
+    res.status(200).send(user)
+  } else {
+    next()
+  }
+})
+
+/*
  * Route to list all of a user's businesses.
  */
 router.get('/:userId/businesses', async function (req, res) {

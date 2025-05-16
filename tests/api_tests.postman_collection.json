@@ -1616,6 +1616,103 @@
 							"body": "{\n  \"id\": \"123e4567-e89b-12d3-a456-426614174000\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Fetch data for a specific user.",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userID",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userID"
+							],
+							"variable": [
+								{
+									"key": "userID",
+									"value": "1",
+									"type": "string",
+									"description": "(Required) Unique ID of a user."
+								}
+							]
+						},
+						"description": "Returns complete data for a user specified by `userID`.\n"
+					},
+					"response": [
+						{
+							"name": "Specified `userID` not found.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/:userID",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userID"
+									],
+									"variable": [
+										{
+											"key": "userID"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"error\": \"<string>\"\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/:userID",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userID"
+									],
+									"variable": [
+										{
+											"key": "userID"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"name\": \"Jane Doe\",\n    \"email\": \"jane@example.com\",\n    \"admin\": false\n}"
+						}
+					]
 				}
 			]
 		},

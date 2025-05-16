@@ -61,7 +61,7 @@ router.post('/login', async function (req, res) {
 /*
  * Route to get a user.
  */
-router.get('/:userId', async function (req, res) {
+router.get('/:userId', async function (req, res, next) {
   const userId = req.params.userId
   const user = await User.findByPk(userId, {
     attributes: ['id', 'name', 'email', 'admin']

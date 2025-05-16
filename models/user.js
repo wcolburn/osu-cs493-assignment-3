@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../lib/sequelize')
+const bcrypt = require('bcryptjs')
 
 const User = sequelize.define('user', {
   name: { type: DataTypes.STRING, allowNull: false },
@@ -7,12 +8,15 @@ const User = sequelize.define('user', {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
-    set(value) {
-      this.setDataValue('password', has( this.name + value))
-    }
   },
   admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 })
+
+User.beforeSave(async (user, options) => {
+  if (user.changed('password')) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+});
 
 exports.User = User;
 exports.UserClientFields = [

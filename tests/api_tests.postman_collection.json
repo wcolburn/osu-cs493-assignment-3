@@ -1545,6 +1545,81 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "users",
+			"item": [
+				{
+					"name": "Add a new user.",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+							"key": "Content-Type",
+							"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jane Doe\",\n    \"email\": \"jane@example.com\",\n    \"password\": \"securePassword123\"\n}",
+							"options": {
+							"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+							"{{baseUrl}}"
+							],
+							"path": [
+							"users"
+							]
+						},
+						"description": "Creates a new user with name, email, and password. Field `admin` is excluded from client input."
+					},
+					"response": [
+						{
+							"name": "Successful user creation",
+							"originalRequest": {
+							"method": "POST",
+							"header": [
+								{
+								"key": "Content-Type",
+								"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"name\": \"Jane Doe\",\n    \"email\": \"jane@example.com\",\n    \"password\": \"securePassword123\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/users",
+								"host": [
+								"{{baseUrl}}"
+								],
+								"path": [
+								"users"
+								]
+							}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"123e4567-e89b-12d3-a456-426614174000\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "users/{userId}",
 			"item": [
 				{

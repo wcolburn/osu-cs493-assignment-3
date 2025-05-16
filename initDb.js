@@ -15,7 +15,7 @@ const reviewData = require('./data/reviews.json')
 const userData = require('./data/users.json')
 
 sequelize.sync({ force: true }).then(async function () {
-  await User.bulkCreate(userData, { fields: UserClientFields } )
+  await User.bulkCreate(userData, { fields: UserClientFields, individualHooks: true } )
   await Business.bulkCreate(businessData, { fields: BusinessClientFields })
   await Photo.bulkCreate(photoData, { fields: PhotoClientFields })
   await Review.bulkCreate(reviewData, { fields: ReviewClientFields })

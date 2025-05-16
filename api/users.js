@@ -37,13 +37,13 @@ router.post('/login', async function (req, res) {
     // Grab the user from the database
     const user = await User.findOne({ where: { email: email } })
     if (!user) {
-      res.status(403).send({"error": "Incorrect email"})
+      return res.status(403).send({"error": "Incorrect email"})
     }
 
     // Check password
     const passwords_match = await bcrypt.compare(login_pass, user.password);
     if (!passwords_match) {
-      res.status(403).send({"error": "Incorrect password"})
+      return res.status(403).send({"error": "Incorrect password"})
     }
 
     // Return 200 OK with JWT token

@@ -30,7 +30,7 @@ status 'GET users/id fails if you are not the specified user'
 curl -H "$auth" http://localhost:8000/users/2
 
 status 'GET users/id/businesses succeeds'
-curl http://localhost:8000/users/1/businesses
+curl -H "$auth" http://localhost:8000/users/1/businesses
 
 status 'GET users/id/photos succeeds'
 curl http://localhost:8000/users/21/photos

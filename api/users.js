@@ -64,9 +64,8 @@ router.post('/login', async function (req, res) {
 // Middleware checking the request has correct authentication for the route
 function requireAuthentication(req, res, next) {
     const token = req.get('Authorization');
-    console.log("User token: " + token);
     if (!token) {
-        res.status(403).send({"error": "missing Authorization"});
+        return res.status(403).send({"error": "missing Authorization"});
     } else {
         try {
             const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -75,7 +74,7 @@ function requireAuthentication(req, res, next) {
             next();
         } catch(err) {
             // this means we failed
-            res.status(403).send({"error": "incorrect token"});
+            return res.status(403).send({"error": "incorrect token"});
         }
     }
 }
@@ -87,6 +86,7 @@ router.get('/:userId', requireAuthentication, async function (req, res, next) {
   const userId = req.params.userId
   if (userId != req.user) {
     res.status(403).send({"error": "Unallowed to access the data of a user not yourself."})
+    return
   }
 
   const user = await User.findByPk(userId, {
@@ -95,7 +95,7 @@ router.get('/:userId', requireAuthentication, async function (req, res, next) {
   if (user) {
     res.status(200).send(user)
   } else {
-    next()
+    res.status(404).send({ error: "User not found" });
   }
 })
 

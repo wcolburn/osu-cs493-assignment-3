@@ -11,19 +11,23 @@ tempfile=curl.out.$$.tmp
 
 # Users
 
-status 'POST new user returns success'
+status 'POST users/login returns success'
 curl -H 'Content-Type: application/json' -o "$tempfile" -d '{
-    "name": "Jeff Bezos",
-    "email": "jeff@amazon.com",
-    "password": "secure123"
-    }' http://localhost:8000/users
+    "email": "nick@block15.com",
+    "password": "hunter2"
+    }' http://localhost:8000/users/login
 
 cat "$tempfile"
 token=$(awk -F'"token":"' '{print $2}' "$tempfile" | awk -F'"' '{print $1}')
 rm -f "$tempfile"
 
+auth="Authorization: $token"
+
 status 'GET users/id succeeds'
-curl http://localhost:8000/users/1
+curl -H "$auth" http://localhost:8000/users/1
+
+status 'GET users/id fails if you are not the specified user'
+curl -H "$auth" http://localhost:8000/users/2
 
 status 'GET users/id/businesses succeeds'
 curl http://localhost:8000/users/1/businesses

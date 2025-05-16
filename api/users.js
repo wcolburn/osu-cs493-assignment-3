@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const { ValidationError } = require('sequelize')
 
 const { Business } = require('../models/business')
 const { Photo } = require('../models/photo')
@@ -28,8 +29,8 @@ router.post('/', async function (req, res) {
  */
 router.post('/login', async function (req, res) {
   try {
-    const email = req.params.email
-    const login_pass = req.params.password
+    const email = req.body.email
+    const login_pass = req.body.password
 
     // Grab the user from the database
     const user = await User.findOne({ where: { email: email } })
@@ -58,11 +59,34 @@ router.post('/login', async function (req, res) {
   }
 })
 
+// Middleware checking the request has correct authentication for the route
+function requireAuthentication(req, res, next) {
+    const token = req.get('Authorization');
+    console.log("User token: " + token);
+    if (!token) {
+        res.status(403).send({"error": "missing Authorization"});
+    } else {
+        try {
+            const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+            // if we get here, success
+            req.user = payload.sub;
+            next();
+        } catch(err) {
+            // this means we failed
+            res.status(403).send({"error": "incorrect token"});
+        }
+    }
+}
+
 /*
  * Route to get a user.
  */
-router.get('/:userId', async function (req, res, next) {
+router.get('/:userId', requireAuthentication, async function (req, res, next) {
   const userId = req.params.userId
+  if (userId != req.user) {
+    res.status(403).send({"error": "Unallowed to access the data of a user not yourself."})
+  }
+
   const user = await User.findByPk(userId, {
     attributes: ['id', 'name', 'email', 'admin']
   })

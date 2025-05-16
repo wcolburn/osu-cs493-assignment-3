@@ -24,6 +24,41 @@ router.post('/', async function (req, res) {
 })
 
 /*
+ * Route for a user to login, recieving a JWT token.
+ */
+router.post('/login', async function (req, res) {
+  try {
+    const email = req.params.email
+    const login_pass = req.params.password
+
+    // Grab the user from the database
+    const user = await User.findOne({ where: { email: email } })
+    if (!user) {
+      res.status(403).send({"error": "Incorrect email"})
+    }
+
+    // Check password
+    const passwords_match = await bcrypt.compare(login_pass, user.password);
+    if (!passwords_match) {
+      res.status(403).send({"error": "Incorrect password"})
+    }
+
+    // Return 200 OK with JWT token
+    const payload = { "sub": user.id };
+    const expiration = { "expiresIn": "24h" };
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, expiration);
+    res.status(200).send({"status": "ok", "token": token});
+
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      res.status(400).send({ error: e.message })
+    } else {
+      throw e
+    }
+  }
+})
+
+/*
  * Route to get a user.
  */
 router.get('/:userId', async function (req, res) {

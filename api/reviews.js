@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const { ValidationError } = require('sequelize')
+const { requireAuthentication } = require('../lib/requireAuthentication')
 
 const { Review, ReviewClientFields } = require('../models/review')
 
@@ -8,7 +9,7 @@ const router = Router()
 /*
  * Route to create a new review.
  */
-router.post('/', async function (req, res, next) {
+router.post('/', requireAuthentication, correctUser, async function (req, res, next) {
   try {
     const review = await Review.create(req.body, ReviewClientFields)
     res.status(201).send({ id: review.id })
@@ -20,6 +21,18 @@ router.post('/', async function (req, res, next) {
     }
   }
 })
+
+// Middleware to check the correct user is accessing this route
+function correctUser(req, res, next) {
+  const userId = req.body.userId
+  console.log(`Business owner is ${userId} and requester is ${req.user}`)
+  if (userId != req.user) {
+    res.status(403).send({"error": "Unallowed to post a new review for a user not yourself."})
+    return
+  } else {
+    next()
+  }
+}
 
 /*
  * Route to fetch info about a specific review.

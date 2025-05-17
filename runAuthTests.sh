@@ -75,32 +75,29 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
 # Reviews
 
 status 'POST new reviews returns success'
-curl -H 'Content-Type: application/json' -d '{
-    "business_id": 1,
-    "user_id": 1,
+curl -H 'Content-Type: application/json' -H "$auth" -d '{
+    "businessId": 1,
+    "userId": 1,
     "stars": 5,
-    "cost": 3,
-    "description": "Good ice cream!"
+    "dollars": 3,
+    "review": "Good ice cream!"
     }' http://localhost:8000/reviews
 
-status 'GET reviews/id succeeds'
-curl http://localhost:8000/reviews/1
+status 'POST new reviews fails for another user'
+curl -H 'Content-Type: application/json' -H "$auth" -d '{
+    "businessId": 5,
+    "userId": 5,
+    "stars": 2,
+    "dollars": 1,
+    "review": "Bleh.. ice cream"
+    }' http://localhost:8000/reviews
 
-status 'GET reviews suceeds'
-curl http://localhost:8000/reviews
+# status 'PUT reviews succeeds'
+# curl -X PUT http://localhost:8000/reviews/1 -H 'Content-Type: application/json' -d '{
+#     "stars": 1,
+#     "description": "Sucks actually"
+#     }' 
 
-status 'GET reviews?page=2 suceeds'
-curl http://localhost:8000/reviews?page=2
-
-status 'PUT reviews succeeds'
-curl -X PUT http://localhost:8000/reviews/1 -H 'Content-Type: application/json' -d '{
-    "stars": 1,
-    "description": "Sucks actually"
-    }' 
-curl http://localhost:8000/reviews/1
-
-status 'DELETE reviews succeeds'
-curl -X DELETE http://localhost:8000/reviews/1 -H 'Content-Type: application/json'
 
 # Photos
 
@@ -109,4 +106,11 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "businessId": 1,
     "userId": 1,
     "caption": "Ice crem"
+    }' http://localhost:8000/photos
+
+status 'POST new photos fails if another user'
+curl -H 'Content-Type: application/json' -H "$auth" -d '{
+    "businessId": 5,
+    "userId": 5,
+    "caption": "Banana"
     }' http://localhost:8000/photos

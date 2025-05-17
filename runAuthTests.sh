@@ -45,7 +45,7 @@ curl -H "$auth" http://localhost:8000/users/21/reviews
 
 status 'POST new business returns success'
 curl -H 'Content-Type: application/json' -d '{
-    "ownerId": 16,
+    "ownerId": 1,
     "name": "American Dream Pizza",
     "address": "2525 NW Monroe Ave.",
     "city": "Corvallis",

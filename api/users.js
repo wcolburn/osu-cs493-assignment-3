@@ -6,7 +6,8 @@ const jwt = require('jsonwebtoken');
 const { Business } = require('../models/business')
 const { Photo } = require('../models/photo')
 const { Review } = require('../models/review')
-const { User, UserClientFields } = require('../models/user')
+const { User, UserClientFields } = require('../models/user');
+const { requireAuthentication } = require('../lib/requireAuthentication');
 
 const router = Router()
 
@@ -60,24 +61,6 @@ router.post('/login', async function (req, res) {
     }
   }
 })
-
-// Middleware checking the request has correct authentication for the route
-function requireAuthentication(req, res, next) {
-    const token = req.get('Authorization');
-    if (!token) {
-        return res.status(403).send({"error": "missing Authorization"});
-    } else {
-        try {
-            const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
-            // if we get here, success
-            req.user = payload.sub;
-            next();
-        } catch(err) {
-            // this means we failed
-            return res.status(403).send({"error": "incorrect token"});
-        }
-    }
-}
 
 // Middleware to check the correct user is accessing this route
 function correctUser(req, res, next) {

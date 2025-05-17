@@ -107,14 +107,12 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
 
 status 'PATCH reviews succeeds'
 curl -X PATCH http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth" -d '{
-    "userID": 1,
     "stars": 1,
     "review": "Sucks actually"
     }' 
 
 status 'PATCH reviews fails for another user'
-curl -X PATCH http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth" -d '{
-    "userID": 5,
+curl -X PATCH http://localhost:8000/reviews/5 -H 'Content-Type: application/json' -H "$auth" -d '{
     "stars": 4,
     "review": "I totes love it!"
     }' 
@@ -136,6 +134,15 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "caption": "Banana"
     }' http://localhost:8000/photos
 
+status 'PATCH photos returns success'
+curl -X PATCH -H 'Content-Type: application/json' -H "$auth" -d '{
+    "caption": "Ice creaaaam"
+    }' http://localhost:8000/photos/11
+
+status 'PATCH photos fails if another user'
+curl -X PATCH -H 'Content-Type: application/json' -H "$auth" -d '{
+    "caption": "Banana"
+    }' http://localhost:8000/photos/5
 
 # DELETES
 
@@ -145,8 +152,14 @@ curl -X DELETE http://localhost:8000/reviews/11 -H 'Content-Type: application/js
 status 'DELETE reviews fails for another user'
 curl -X DELETE http://localhost:8000/reviews/5 -H 'Content-Type: application/json' -H "$auth"
 
+status 'DELETE photos succeeds'
+curl -X DELETE http://localhost:8000/photos/11 -H 'Content-Type: application/json' -H "$auth"
+
+status 'DELETE photos fails for another user'
+curl -X DELETE http://localhost:8000/photos/5 -H 'Content-Type: application/json' -H "$auth"
+
 status 'DELETE business succeeds'
 curl -X DELETE http://localhost:8000/businesses/1 -H 'Content-Type: application/json' -H "$auth"
 
-status 'DELETE reviews fails for another user'
+status 'DELETE business fails for another user'
 curl -X DELETE http://localhost:8000/businesses/5 -H 'Content-Type: application/json' -H "$auth"

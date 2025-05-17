@@ -50,7 +50,7 @@ router.get('/:photoId', async function (req, res, next) {
 /*
  * Route to update a photo.
  */
-router.patch('/:photoId', async function (req, res, next) {
+router.patch('/:photoId', requireAuthentication, grabAndVerifyCorrectUser, async function (req, res, next) {
   const photoId = req.params.photoId
 
   /*
@@ -72,7 +72,7 @@ router.patch('/:photoId', async function (req, res, next) {
 /*
  * Route to delete a photo.
  */
-router.delete('/:photoId', async function (req, res, next) {
+router.delete('/:photoId', requireAuthentication, grabAndVerifyCorrectUser, async function (req, res, next) {
   const photoId = req.params.photoId
   const result = await Photo.destroy({ where: { id: photoId }})
   if (result > 0) {
@@ -81,5 +81,21 @@ router.delete('/:photoId', async function (req, res, next) {
     next()
   }
 })
+
+// Middleware to check the correct user is accessing this route
+async function grabAndVerifyCorrectUser(req, res, next) {
+
+  const photo = await Photo.findByPk(req.params.photoId)
+  console.log(`photo ${req.params.photoId} retrieved: ${photo}`)
+  const userId = photo.userId
+
+  console.log(`Business owner is ${userId} and requester is ${req.user}`)
+  if (userId != req.user) {
+    res.status(403).send({"error": "Unallowed to edit a photo for a user not yourself."})
+    return
+  } else {
+    next()
+  }
+}
 
 module.exports = router

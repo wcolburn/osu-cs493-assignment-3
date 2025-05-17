@@ -44,7 +44,7 @@ curl -H "$auth" http://localhost:8000/users/21/reviews
 # Businesses
 
 status 'POST new business returns success'
-curl -H 'Content-Type: application/json' -d '{
+curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "ownerId": 1,
     "name": "American Dream Pizza",
     "address": "2525 NW Monroe Ave.",
@@ -57,17 +57,18 @@ curl -H 'Content-Type: application/json' -d '{
     "website": "http://adpizza.com"
     }' http://localhost:8000/businesses
 
-status 'GET business-by-id should return success'
-curl http://localhost:8000/businesses/2
-
-status 'POST new business returns failure with missing parameters'
-curl -H 'Content-Type: application/json' -d '{
-    "name": "Ice Cream Bozos",
-    "street": "1764 Axis St",
-    "city": "Redmond",
-    "state": "Oregon",
-    "zip": "97756",
-    "phone_number": "000-111-2222"
+status 'POST new business fails if the wrong user'
+curl -H 'Content-Type: application/json' -H "$auth" -d '{
+    "ownerId": 5,
+    "name": "American GROSS Pizza",
+    "address": "2525 NW Monroe Ave.",
+    "city": "Corvallis",
+    "state": "OR",
+    "zip": "97330",
+    "phone": "541-757-1713",
+    "category": "Restaurant",
+    "subcategory": "Pizza",
+    "website": "http://adpizza.com"
     }' http://localhost:8000/businesses
 
 status 'GET businesses returns page 1'

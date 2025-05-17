@@ -4,6 +4,7 @@ const { ValidationError } = require('sequelize')
 const { Business, BusinessClientFields } = require('../models/business')
 const { Photo } = require('../models/photo')
 const { Review } = require('../models/review')
+const { requireAuthentication } = require('../lib/requireAuthentication')
 
 const router = Router()
 
@@ -55,7 +56,7 @@ router.get('/', async function (req, res) {
 /*
  * Route to create a new business.
  */
-router.post('/', async function (req, res, next) {
+router.post('/', requireAuthentication, correctUser, async function (req, res, next) {
   try {
     const business = await Business.create(req.body, BusinessClientFields)
     res.status(201).send({ id: business.id })
@@ -67,6 +68,18 @@ router.post('/', async function (req, res, next) {
     }
   }
 })
+
+// Middleware to check the correct user is accessing this route
+function correctUser(req, res, next) {
+  const userId = req.body.ownerId
+  console.log(`Business owner is ${userId} and requester is ${req.user}`)
+  if (userId != req.user) {
+    res.status(403).send({"error": "Unallowed to access the data of a user not yourself."})
+    return
+  } else {
+    next()
+  }
+}
 
 /*
  * Route to fetch info about a specific business.

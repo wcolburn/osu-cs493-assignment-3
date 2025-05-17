@@ -32,10 +32,10 @@ curl -H "$auth" http://localhost:8000/users/2
 status 'GET users/id/businesses succeeds'
 curl -H "$auth" http://localhost:8000/users/1/businesses
 
-status 'GET users/id/photos succeeds'
-curl -H "$auth" http://localhost:8000/users/21/photos
+status 'GET users/id/photos succceeds'
+curl -H "$auth" http://localhost:8000/users/1/photos
 
-status 'GET users/id/reviews succeeds'
+status 'GET users/id/reviews fails for another user'
 curl -H "$auth" http://localhost:8000/users/21/reviews
 
 status 'GET users/id/reviews fails for another user'

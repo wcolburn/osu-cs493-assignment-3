@@ -79,7 +79,7 @@ function requireAuthentication(req, res, next) {
     }
 }
 
-// Function to be called within a route to check the correct user is accessing this data
+// Middleware to check the correct user is accessing this route
 function correctUser(req, res, next) {
     const userId = req.params.userId
   if (userId != req.user) {
@@ -107,7 +107,7 @@ router.get('/:userId', requireAuthentication, correctUser, async function (req, 
 /*
  * Route to list all of a user's businesses.
  */
-router.get('/:userId/businesses', requireAuthentication, async function (req, res) {
+router.get('/:userId/businesses', requireAuthentication, correctUser, async function (req, res) {
   const userId = req.params.userId
   const userBusinesses = await Business.findAll({ where: { ownerId: userId }})
   res.status(200).json({
@@ -118,7 +118,7 @@ router.get('/:userId/businesses', requireAuthentication, async function (req, re
 /*
  * Route to list all of a user's reviews.
  */
-router.get('/:userId/reviews', requireAuthentication, async function (req, res) {
+router.get('/:userId/reviews', requireAuthentication, correctUser, async function (req, res) {
   const userId = req.params.userId
   const userReviews = await Review.findAll({ where: { userId: userId }})
   res.status(200).json({
@@ -129,7 +129,7 @@ router.get('/:userId/reviews', requireAuthentication, async function (req, res) 
 /*
  * Route to list all of a user's photos.
  */
-router.get('/:userId/photos', requireAuthentication, async function (req, res) {
+router.get('/:userId/photos', requireAuthentication, correctUser, async function (req, res) {
   const userId = req.params.userId
   const userPhotos = await Photo.findAll({ where: { userId: userId }})
   res.status(200).json({

@@ -79,17 +79,22 @@ function requireAuthentication(req, res, next) {
     }
 }
 
-/*
- * Route to get a user.
- */
-router.get('/:userId', requireAuthentication, async function (req, res, next) {
-  const userId = req.params.userId
+// Function to be called within a route to check the correct user is accessing this data
+function correctUser(req, res, next) {
+    const userId = req.params.userId
   if (userId != req.user) {
     res.status(403).send({"error": "Unallowed to access the data of a user not yourself."})
     return
+  } else {
+    next()
   }
+}
 
-  const user = await User.findByPk(userId, {
+/*
+ * Route to get a user.
+ */
+router.get('/:userId', requireAuthentication, correctUser, async function (req, res, next) {
+  const user = await User.findByPk(req.params.userId, {
     attributes: ['id', 'name', 'email', 'admin']
   })
   if (user) {
@@ -102,7 +107,7 @@ router.get('/:userId', requireAuthentication, async function (req, res, next) {
 /*
  * Route to list all of a user's businesses.
  */
-router.get('/:userId/businesses', async function (req, res) {
+router.get('/:userId/businesses', requireAuthentication, async function (req, res) {
   const userId = req.params.userId
   const userBusinesses = await Business.findAll({ where: { ownerId: userId }})
   res.status(200).json({
@@ -113,7 +118,7 @@ router.get('/:userId/businesses', async function (req, res) {
 /*
  * Route to list all of a user's reviews.
  */
-router.get('/:userId/reviews', async function (req, res) {
+router.get('/:userId/reviews', requireAuthentication, async function (req, res) {
   const userId = req.params.userId
   const userReviews = await Review.findAll({ where: { userId: userId }})
   res.status(200).json({
@@ -124,7 +129,7 @@ router.get('/:userId/reviews', async function (req, res) {
 /*
  * Route to list all of a user's photos.
  */
-router.get('/:userId/photos', async function (req, res) {
+router.get('/:userId/photos', requireAuthentication, async function (req, res) {
   const userId = req.params.userId
   const userPhotos = await Photo.findAll({ where: { userId: userId }})
   res.status(200).json({

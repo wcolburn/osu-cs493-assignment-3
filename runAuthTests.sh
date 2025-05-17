@@ -41,6 +41,7 @@ curl -H "$auth" http://localhost:8000/users/21/reviews
 status 'GET users/id/reviews fails for another user'
 curl -H "$auth" http://localhost:8000/users/21/reviews
 
+
 # Businesses
 
 status 'POST new business returns success'
@@ -70,6 +71,18 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "subcategory": "Pizza",
     "website": "http://adpizza.com"
     }' http://localhost:8000/businesses
+
+status 'PATCH business succeeds'
+curl -X PATCH http://localhost:8000/businesses/1 -H 'Content-Type: application/json' -H "$auth" -d '{
+    "name": "Worse business",
+    "phone": "000-000-0100"
+    }' 
+
+status 'PATCH business fails for another user'
+curl -X PATCH http://localhost:8000/businesses/5 -H 'Content-Type: application/json' -H "$auth" -d '{
+    "name": "Worse business again",
+    "phone": "000-000-0101"
+    }' 
 
 
 # Reviews
@@ -106,12 +119,6 @@ curl -X PATCH http://localhost:8000/reviews/11 -H 'Content-Type: application/jso
     "review": "I totes love it!"
     }' 
 
-status 'DELETE reviews succeeds'
-curl -X DELETE http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth"
-
-status 'DELETE reviews fails for another user'
-curl -X DELETE http://localhost:8000/reviews/5 -H 'Content-Type: application/json' -H "$auth"
-
 
 # Photos
 
@@ -128,3 +135,18 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "userId": 5,
     "caption": "Banana"
     }' http://localhost:8000/photos
+
+
+# DELETES
+
+status 'DELETE reviews succeeds'
+curl -X DELETE http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth"
+
+status 'DELETE reviews fails for another user'
+curl -X DELETE http://localhost:8000/reviews/5 -H 'Content-Type: application/json' -H "$auth"
+
+status 'DELETE business succeeds'
+curl -X DELETE http://localhost:8000/businesses/1 -H 'Content-Type: application/json' -H "$auth"
+
+status 'DELETE reviews fails for another user'
+curl -X DELETE http://localhost:8000/businesses/5 -H 'Content-Type: application/json' -H "$auth"

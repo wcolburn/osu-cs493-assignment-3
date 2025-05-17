@@ -99,7 +99,7 @@ router.get('/:businessId', async function (req, res, next) {
 /*
  * Route to update data for a business.
  */
-router.patch('/:businessId', async function (req, res, next) {
+router.patch('/:businessId', requireAuthentication, grabAndVerifyCorrectUser, async function (req, res, next) {
   const businessId = req.params.businessId
   const result = await Business.update(req.body, {
     where: { id: businessId },
@@ -115,7 +115,7 @@ router.patch('/:businessId', async function (req, res, next) {
 /*
  * Route to delete a business.
  */
-router.delete('/:businessId', async function (req, res, next) {
+router.delete('/:businessId', requireAuthentication, grabAndVerifyCorrectUser, async function (req, res, next) {
   const businessId = req.params.businessId
   const result = await Business.destroy({ where: { id: businessId }})
   if (result > 0) {
@@ -124,5 +124,21 @@ router.delete('/:businessId', async function (req, res, next) {
     next()
   }
 })
+
+// Middleware to check the correct user is accessing this route
+async function grabAndVerifyCorrectUser(req, res, next) {
+  // const userId = req.body.userId
+
+  const business = await Business.findByPk(req.params.businessId)
+  const userId = business.ownerId
+
+  console.log(`Business owner is ${userId} and requester is ${req.user}`)
+  if (userId != req.user) {
+    res.status(403).send({"error": "Unallowed to edit a business for a user not yourself."})
+    return
+  } else {
+    next()
+  }
+}
 
 module.exports = router

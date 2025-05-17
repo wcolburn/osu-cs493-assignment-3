@@ -50,7 +50,7 @@ router.get('/:reviewId', async function (req, res, next) {
 /*
  * Route to update a review.
  */
-router.patch('/:reviewId', async function (req, res, next) {
+router.patch('/:reviewId', requireAuthentication, grabAndVerifyCorrectUser, async function (req, res, next) {
   const reviewId = req.params.reviewId
 
   /*
@@ -72,7 +72,7 @@ router.patch('/:reviewId', async function (req, res, next) {
 /*
  * Route to delete a review.
  */
-router.delete('/:reviewId', async function (req, res, next) {
+router.delete('/:reviewId', requireAuthentication, grabAndVerifyCorrectUser, async function (req, res, next) {
   const reviewId = req.params.reviewId
   const result = await Review.destroy({ where: { id: reviewId }})
   if (result > 0) {
@@ -81,5 +81,21 @@ router.delete('/:reviewId', async function (req, res, next) {
     next()
   }
 })
+
+// Middleware to check the correct user is accessing this route
+async function grabAndVerifyCorrectUser(req, res, next) {
+  // const userId = req.body.userId
+
+  const review = await Review.findByPk(req.params.reviewId)
+  const userId = review.userId
+
+  console.log(`Business owner is ${userId} and requester is ${req.user}`)
+  if (userId != req.user) {
+    res.status(403).send({"error": "Unallowed to edit a review for a user not yourself."})
+    return
+  } else {
+    next()
+  }
+}
 
 module.exports = router

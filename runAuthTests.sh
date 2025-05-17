@@ -92,11 +92,25 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "review": "Bleh.. ice cream"
     }' http://localhost:8000/reviews
 
-# status 'PUT reviews succeeds'
-# curl -X PUT http://localhost:8000/reviews/1 -H 'Content-Type: application/json' -d '{
-#     "stars": 1,
-#     "description": "Sucks actually"
-#     }' 
+status 'PATCH reviews succeeds'
+curl -X PATCH http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth" -d '{
+    "userID": 1,
+    "stars": 1,
+    "review": "Sucks actually"
+    }' 
+
+status 'PATCH reviews fails for another user'
+curl -X PATCH http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth" -d '{
+    "userID": 5,
+    "stars": 4,
+    "review": "I totes love it!"
+    }' 
+
+status 'DELETE reviews succeeds'
+curl -X DELETE http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth"
+
+status 'DELETE reviews fails for another user'
+curl -X DELETE http://localhost:8000/reviews/5 -H 'Content-Type: application/json' -H "$auth"
 
 
 # Photos

@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const { ValidationError } = require('sequelize')
+const { requireAuthentication } = require('../lib/requireAuthentication')
 
 const { Photo, PhotoClientFields } = require('../models/photo')
 
@@ -8,7 +9,7 @@ const router = Router()
 /*
  * Route to create a new photo.
  */
-router.post('/', async function (req, res, next) {
+router.post('/', requireAuthentication, correctUser, async function (req, res, next) {
   try {
     const photo = await Photo.create(req.body, PhotoClientFields)
     res.status(201).send({ id: photo.id })
@@ -20,6 +21,18 @@ router.post('/', async function (req, res, next) {
     }
   }
 })
+
+// Middleware to check the correct user is accessing this route
+function correctUser(req, res, next) {
+  const userId = req.body.userId
+  console.log(`Photo owner is ${userId} and requester is ${req.user}`)
+  if (userId != req.user) {
+    res.status(403).send({"error": "Unallowed to post a photo of a user not yourself."})
+    return
+  } else {
+    next()
+  }
+}
 
 /*
  * Route to fetch info about a specific photo.

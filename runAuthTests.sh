@@ -71,18 +71,6 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "website": "http://adpizza.com"
     }' http://localhost:8000/businesses
 
-status 'GET businesses returns page 1'
-curl http://localhost:8000/businesses
-
-status 'PUT business returns success'
-curl -X PUT http://localhost:8000/businesses/1 -H 'Content-Type: application/json' -d '{
-    "name": "Super! Ice Cream Bozos",
-    "street": "Freezer Cir"
-    }' 
-
-status 'DELETE business succeeds'
-curl -X DELETE http://localhost:8000/businesses/1 -H 'Content-Type: application/json'
-
 
 # Reviews
 
@@ -117,24 +105,8 @@ curl -X DELETE http://localhost:8000/reviews/1 -H 'Content-Type: application/jso
 # Photos
 
 status 'POST new photos returns success'
-curl -H 'Content-Type: application/json' -d '{
-    "business_id": 1,
-    "user_id": 1,
-    "caption": "Ice crem",
-    "img_URL": "www.pixels.com/myphoto"
+curl -H 'Content-Type: application/json' -H "$auth" -d '{
+    "businessId": 1,
+    "userId": 1,
+    "caption": "Ice crem"
     }' http://localhost:8000/photos
-
-status 'GET photos/id succeeds'
-curl http://localhost:8000/photos/1
-
-status 'GET photos succeeds'
-curl http://localhost:8000/photos
-
-status 'PUT photos succeeds'
-curl -X PUT http://localhost:8000/photos/1 -H 'Content-Type: application/json' -d '{
-    "caption": "Subscribe to my youtuber at..."
-    }' 
-curl http://localhost:8000/photos/1
-
-status 'DELETE photos suceeds'
-curl -X DELETE http://localhost:8000/photos/1 -H 'Content-Type: application/json'

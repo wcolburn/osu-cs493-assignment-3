@@ -22,13 +22,14 @@ services:
   api:
     build: .
     ports:
-      - 8000:8000
+      - ${MYSQL_PORT}:${MYSQL_PORT}
     environment:
       MYSQL_HOST: db
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DB_NAME: ${MYSQL_DB_NAME}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      PORT: ${MYSQL_PORT}
 
     depends_on:
       - db

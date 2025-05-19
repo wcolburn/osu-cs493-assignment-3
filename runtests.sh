@@ -1,4 +1,5 @@
 #!/bin/sh
+source .env
 
 status() {
     printf "\n=====================================================\n"
@@ -15,7 +16,7 @@ status 'POST users/login returns success'
 curl -H 'Content-Type: application/json' -o "$tempfile" -d '{
     "email": "nick@block15.com",
     "password": "hunter2"
-    }' http://localhost:8000/users/login
+    }' http://localhost:$MYSQL_PORT/users/login
 
 cat "$tempfile"
 token=$(awk -F'"token":"' '{print $2}' "$tempfile" | awk -F'"' '{print $1}')
@@ -24,22 +25,22 @@ rm -f "$tempfile"
 auth="Authorization: $token"
 
 status 'GET users/id succeeds'
-curl -H "$auth" http://localhost:8000/users/1
+curl -H "$auth" http://localhost:$MYSQL_PORT/users/1
 
 status 'GET users/id fails if you are not the specified user'
-curl -H "$auth" http://localhost:8000/users/2
+curl -H "$auth" http://localhost:$MYSQL_PORT/users/2
 
 status 'GET users/id/businesses succeeds'
-curl -H "$auth" http://localhost:8000/users/1/businesses
+curl -H "$auth" http://localhost:$MYSQL_PORT/users/1/businesses
 
 status 'GET users/id/photos succceeds'
-curl -H "$auth" http://localhost:8000/users/1/photos
+curl -H "$auth" http://localhost:$MYSQL_PORT/users/1/photos
 
 status 'GET users/id/reviews fails for another user'
-curl -H "$auth" http://localhost:8000/users/21/reviews
+curl -H "$auth" http://localhost:$MYSQL_PORT/users/21/reviews
 
 status 'GET users/id/reviews fails for another user'
-curl -H "$auth" http://localhost:8000/users/21/reviews
+curl -H "$auth" http://localhost:$MYSQL_PORT/users/21/reviews
 
 
 # Businesses
@@ -56,7 +57,7 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "category": "Restaurant",
     "subcategory": "Pizza",
     "website": "http://adpizza.com"
-    }' http://localhost:8000/businesses
+    }' http://localhost:$MYSQL_PORT/businesses
 
 status 'POST new business fails if the wrong user'
 curl -H 'Content-Type: application/json' -H "$auth" -d '{
@@ -70,16 +71,16 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "category": "Restaurant",
     "subcategory": "Pizza",
     "website": "http://adpizza.com"
-    }' http://localhost:8000/businesses
+    }' http://localhost:$MYSQL_PORT/businesses
 
 status 'PATCH business succeeds'
-curl -X PATCH http://localhost:8000/businesses/1 -H 'Content-Type: application/json' -H "$auth" -d '{
+curl -X PATCH http://localhost:$MYSQL_PORT/businesses/1 -H 'Content-Type: application/json' -H "$auth" -d '{
     "name": "Worse business",
     "phone": "000-000-0100"
     }' 
 
 status 'PATCH business fails for another user'
-curl -X PATCH http://localhost:8000/businesses/5 -H 'Content-Type: application/json' -H "$auth" -d '{
+curl -X PATCH http://localhost:$MYSQL_PORT/businesses/5 -H 'Content-Type: application/json' -H "$auth" -d '{
     "name": "Worse business again",
     "phone": "000-000-0101"
     }' 
@@ -94,7 +95,7 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "stars": 5,
     "dollars": 3,
     "review": "Good ice cream!"
-    }' http://localhost:8000/reviews
+    }' http://localhost:$MYSQL_PORT/reviews
 
 status 'POST new reviews fails for another user'
 curl -H 'Content-Type: application/json' -H "$auth" -d '{
@@ -103,16 +104,16 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "stars": 2,
     "dollars": 1,
     "review": "Bleh.. ice cream"
-    }' http://localhost:8000/reviews
+    }' http://localhost:$MYSQL_PORT/reviews
 
 status 'PATCH reviews succeeds'
-curl -X PATCH http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth" -d '{
+curl -X PATCH http://localhost:$MYSQL_PORT/reviews/11 -H 'Content-Type: application/json' -H "$auth" -d '{
     "stars": 1,
     "review": "Sucks actually"
     }' 
 
 status 'PATCH reviews fails for another user'
-curl -X PATCH http://localhost:8000/reviews/5 -H 'Content-Type: application/json' -H "$auth" -d '{
+curl -X PATCH http://localhost:$MYSQL_PORT/reviews/5 -H 'Content-Type: application/json' -H "$auth" -d '{
     "stars": 4,
     "review": "I totes love it!"
     }' 
@@ -125,41 +126,41 @@ curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "businessId": 1,
     "userId": 1,
     "caption": "Ice crem"
-    }' http://localhost:8000/photos
+    }' http://localhost:$MYSQL_PORT/photos
 
 status 'POST new photos fails if another user'
 curl -H 'Content-Type: application/json' -H "$auth" -d '{
     "businessId": 5,
     "userId": 5,
     "caption": "Banana"
-    }' http://localhost:8000/photos
+    }' http://localhost:$MYSQL_PORT/photos
 
 status 'PATCH photos returns success'
 curl -X PATCH -H 'Content-Type: application/json' -H "$auth" -d '{
     "caption": "Ice creaaaam"
-    }' http://localhost:8000/photos/11
+    }' http://localhost:$MYSQL_PORT/photos/11
 
 status 'PATCH photos fails if another user'
 curl -X PATCH -H 'Content-Type: application/json' -H "$auth" -d '{
     "caption": "Banana"
-    }' http://localhost:8000/photos/5
+    }' http://localhost:$MYSQL_PORT/photos/5
 
 # DELETES
 
 status 'DELETE reviews succeeds'
-curl -X DELETE http://localhost:8000/reviews/11 -H 'Content-Type: application/json' -H "$auth"
+curl -X DELETE http://localhost:$MYSQL_PORT/reviews/11 -H 'Content-Type: application/json' -H "$auth"
 
 status 'DELETE reviews fails for another user'
-curl -X DELETE http://localhost:8000/reviews/5 -H 'Content-Type: application/json' -H "$auth"
+curl -X DELETE http://localhost:$MYSQL_PORT/reviews/5 -H 'Content-Type: application/json' -H "$auth"
 
 status 'DELETE photos succeeds'
-curl -X DELETE http://localhost:8000/photos/11 -H 'Content-Type: application/json' -H "$auth"
+curl -X DELETE http://localhost:$MYSQL_PORT/photos/11 -H 'Content-Type: application/json' -H "$auth"
 
 status 'DELETE photos fails for another user'
-curl -X DELETE http://localhost:8000/photos/5 -H 'Content-Type: application/json' -H "$auth"
+curl -X DELETE http://localhost:$MYSQL_PORT/photos/5 -H 'Content-Type: application/json' -H "$auth"
 
 status 'DELETE business succeeds'
-curl -X DELETE http://localhost:8000/businesses/1 -H 'Content-Type: application/json' -H "$auth"
+curl -X DELETE http://localhost:$MYSQL_PORT/businesses/1 -H 'Content-Type: application/json' -H "$auth"
 
 status 'DELETE business fails for another user'
-curl -X DELETE http://localhost:8000/businesses/5 -H 'Content-Type: application/json' -H "$auth"
+curl -X DELETE http://localhost:$MYSQL_PORT/businesses/5 -H 'Content-Type: application/json' -H "$auth"
